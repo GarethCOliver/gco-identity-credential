@@ -15,7 +15,10 @@
   ~ limitations under the License.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.mdl.app"
+    android:versionCode="1"
+    android:versionName="1.0">
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -109,6 +112,22 @@
                 android:name="android.nfc.cardemulation.host_apdu_service"
                 android:resource="@xml/nfc_data_transfer_apdu_service" />
         </service>
+
+        <service android:name=".util.CredentialProviderHandler"
+            android:exported="true"
+            android:label="Holder App"
+            android:permission="android.permission.BIND_CREDENTIAL_PROVIDER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.credentials.system.CredentialProviderService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.credentials.provider"
+                android:resource="@xml/create_provider" />
+            <meta-data
+                android:name="android.credentials.capabilities"
+                android:resource="@array/array_credential_provider" />
+        </service>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

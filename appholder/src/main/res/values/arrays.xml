@@ -15,4 +15,7 @@
         <item>Keystore-backed</item>
         <item>Hardware-backed</item>
     </string-array>
+    <string-array name="array_credential_provider">
+        <item>MDOC</item>
+    </string-array>
 </resources>

@@ -140,7 +140,7 @@ class DeviceEngagementFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        enableReader()
+//        enableReader()
     }
 
     override fun onPause() {

@@ -7,12 +7,14 @@ plugins {
 }
 
 android {
-    compileSdk libs.versions.compile.sdk.get() as int
+    compileSdkPreview "UpsideDownCake"
+//    compileSdk libs.versions.compile.sdk.get() as int
 
     defaultConfig {
         applicationId "com.android.mdl.app"
         minSdkVersion libs.versions.min.sdk.get() as int
-        targetSdkVersion libs.versions.compile.sdk.get() as int
+//        targetSdkVersion libs.versions.compile.sdk.get() as int
+        targetSdkPreview "UpsideDownCake"
         versionCode 1
         versionName "1.0"
 
@@ -76,6 +78,7 @@ dependencies {
     implementation libs.cbor
     implementation libs.exifinterface
     implementation libs.code.scanner
+    implementation libs.androidx.credentials
 
     kapt libs.androidx.room.kapt
 

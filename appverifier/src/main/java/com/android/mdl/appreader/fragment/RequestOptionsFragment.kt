@@ -1,7 +1,15 @@
 package com.android.mdl.appreader.fragment
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import androidx.credentials.CreateCredentialRequest
+import androidx.credentials.CreateCredentialResponse
+import androidx.credentials.CreateCustomCredentialRequest
+import androidx.credentials.CredentialManager
+import androidx.credentials.CredentialManagerCallback
+import androidx.credentials.exceptions.CreateCredentialException
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -9,6 +17,7 @@ import com.android.mdl.appreader.R
 import com.android.mdl.appreader.databinding.FragmentRequestOptionsBinding
 import com.android.mdl.appreader.document.*
 import com.android.mdl.appreader.transfer.TransferManager
+import java.util.concurrent.Executor
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -112,6 +121,31 @@ class RequestOptionsFragment : Fragment() {
         }
 
         binding.btNext.setOnClickListener {
+
+            if (Build.VERSION.SDK_INT >= 33) {
+                CredentialManager.create(requireContext()).createCredentialAsync(
+                    requireContext(),
+                    CreateCustomCredentialRequest(
+                        "MDOC",
+                        Bundle(),
+                        Bundle(),
+                        false,
+                        CreateCredentialRequest.DisplayInfo("My Cool User"),
+                    ),
+                    null,
+                    Executor { it.run() },
+                    object : CredentialManagerCallback<CreateCredentialResponse, CreateCredentialException> {
+                        override fun onError(e: CreateCredentialException) {
+                            Log.e("MYTAG", "error $e")
+                        }
+
+                        override fun onResult(result: CreateCredentialResponse) {
+                            Log.e("MYTAG", "success $result")
+                        }
+                    }
+                )
+                return@setOnClickListener
+            }
 
             if (binding.cbRequestMdl.isChecked && binding.cbRequestMdlCustom.isChecked) {
                 findNavController().navigate(

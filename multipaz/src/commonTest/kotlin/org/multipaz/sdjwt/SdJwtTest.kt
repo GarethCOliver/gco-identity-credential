@@ -1718,7 +1718,7 @@ class SdJwtTest {
                         "18": true,
                         "21": true,
                         "65": false,
-                        "_sd": ${Json.encodeToString(DisclosureMetadata.All)}
+                        "_sd": ${DisclosureMetadata.All.toJsonObject()}
                       },
                       "nationalities": [
                         "DE",
@@ -1728,7 +1728,6 @@ class SdJwtTest {
                      "vct": "urn:eudi:pid:de:1",
                      "iss": "https://pid-issuer.bund.de.example",
                      "_sd": ${
-                    Json.encodeToString(
                         DisclosureMetadata(
                             claimNames = listOf(
                                 "given_name",
@@ -1738,8 +1737,7 @@ class SdJwtTest {
                                 "nationalities"
                             ),
                             arrayDisclosures = listOfArrayDisclosures("nationalities")
-                        )
-                    )
+                        ).toJsonObject()
                 }
                     }                    
                 """.trimIndent().trim()
@@ -1905,7 +1903,7 @@ class SdJwtTest {
                         "18": true,
                         "21": true,
                         "65": false,
-                        "_sd": ${Json.encodeToString(DisclosureMetadata(claimNames = listOf("12", "14", "21")))}
+                        "_sd": ${DisclosureMetadata(claimNames = listOf("12", "14", "21")).toJsonObject()}
                       },
                       "nationalities": [
                         "DE",
@@ -1915,23 +1913,21 @@ class SdJwtTest {
                      "vct": "urn:eudi:pid:de:1",
                      "iss": "https://pid-issuer.bund.de.example",
                      "_sd": ${
-                    Json.encodeToString(
-                        DisclosureMetadata(
-                            claimNames = listOf(
-                                "given_name",
-                                "family_name",
-                                "age_birth_year",
-                                "age_equal_or_over",
-                            ),
-                            arrayDisclosures = listOf(
-                                DisclosureMetadata.ArrayDisclosure(
-                                    "nationalities",
-                                    listOf(0, 2)
-                                )
-                            )
-                        )
-                    )
-                }
+                         DisclosureMetadata(
+                             claimNames = listOf(
+                                 "given_name",
+                                 "family_name",
+                                 "age_birth_year",
+                                 "age_equal_or_over",
+                                 ),
+                             arrayDisclosures = listOf(
+                                 DisclosureMetadata.ArrayDisclosure(
+                                     "nationalities",
+                                     listOf(0, 2)
+                                 )
+                             )
+                         ).toJsonObject()
+                     }
                     }                    
                 """.trimIndent().trim()
             ).jsonObject

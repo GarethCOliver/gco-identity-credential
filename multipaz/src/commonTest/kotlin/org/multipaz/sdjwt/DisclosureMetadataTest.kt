@@ -1,9 +1,9 @@
 package org.multipaz.sdjwt
 
 import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.json.Json
 import org.multipaz.sdjwt.DisclosureMetadata.Companion.isClaimSelectivelyDisclosable
 import org.multipaz.sdjwt.DisclosureMetadata.Companion.isIndexSelectivelyDisclosable
+import org.multipaz.sdjwt.DisclosureMetadata.Companion.toDisclosureMetadata
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -21,7 +21,7 @@ class DisclosureMetadataTest {
             )
         )
 
-        val actual = Json.decodeFromString<DisclosureMetadata>(Json.encodeToString(expected))
+        val actual = expected.toJsonObject().toDisclosureMetadata()
 
         assertEquals(expected, actual)
     }
@@ -85,7 +85,7 @@ class DisclosureMetadataTest {
     }
 
     @Test
-    fun isIndexSelectivelyDisclosable_presentWithNullIndices_returnsTrue() = runTest {
+    fun isIndexSelectivelyDisclosable_presentWithEmptyIndices_returnsTrue() = runTest {
         val metadata = DisclosureMetadata(
             arrayDisclosures = listOf(
                 DisclosureMetadata.ArrayDisclosure("claim1")

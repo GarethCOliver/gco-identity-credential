@@ -394,9 +394,6 @@ class DigitalCredentialsPresentmentTest {
             expectedSdJwtResponse =
                 """
                     {
-                      "x5c": [
-                        "${Base64.encode(documentStoreTestHarness.dsKey.certChain.certificates[0].encoded.toByteArray())}"
-                      ],
                       "iss": "https://example-issuer.com",
                       "vct": "urn:eudi:pid:1",
                       "family_name": "Mustermann",

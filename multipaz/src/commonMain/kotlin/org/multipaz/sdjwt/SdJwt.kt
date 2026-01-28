@@ -29,6 +29,7 @@ import org.multipaz.crypto.X509CertChain
 import org.multipaz.revocation.RevocationStatus
 import org.multipaz.sdjwt.DisclosureMetadata.Companion.isClaimSelectivelyDisclosable
 import org.multipaz.sdjwt.DisclosureMetadata.Companion.isIndexSelectivelyDisclosable
+import org.multipaz.sdjwt.DisclosureMetadata.Companion.toDisclosureMetadata
 import org.multipaz.sdjwt.DisclosureUtil.putClaimDisclosureDigests
 import org.multipaz.sdjwt.DisclosureUtil.toArrayDigestElement
 import org.multipaz.sdjwt.DisclosureUtil.toArrayDisclosure
@@ -394,10 +395,6 @@ class SdJwt private constructor(
                 creationTime = creationTime,
                 expiresIn = expiresIn
             ) {
-                if (issuerKey is AsymmetricKey.X509Certified) {
-                    put("x5c", issuerKey.certChain.toX5c())
-                }
-
                 mergeAndDiscloseJsonObject(
                     disclosures,
                     claims,
@@ -427,11 +424,7 @@ class SdJwt private constructor(
             saltSizeNumBits: Int
         ): JsonObjectBuilder {
 
-            val disclosureMetadata = if(claims.containsKey("_sd")) {
-                Json.decodeFromJsonElement<DisclosureMetadata>(claims["_sd"]!!)
-            } else {
-                null
-            }
+            val disclosureMetadata = claims["_sd"]?.jsonObject?.toDisclosureMetadata()
 
             val claimDisclosures = mutableListOf<JsonArray>()
 
@@ -485,26 +478,26 @@ class SdJwt private constructor(
                 is JsonArray -> {
                     JsonArray(
                         this.jsonArray.mapIndexed { index, element ->
+                            val claimValue = element.extractDisclosures(
+                                claimName,
+                                disclosures,
+                                disclosureMetadata,
+                                digestAlgorithm,
+                                random,
+                                saltSizeNumBits
+                            )
                             if (disclosureMetadata.isIndexSelectivelyDisclosable(
                                     claimName,
                                     index
                                 )
                             ) {
-                                val claimValue = element.extractDisclosures(
-                                    claimName,
-                                    disclosures,
-                                    disclosureMetadata,
-                                    digestAlgorithm,
-                                    random,
-                                    saltSizeNumBits
-                                )
                                 val disclosure = claimValue.toArrayDisclosure(
                                     random.getRandomSalt(saltSizeNumBits)
                                 )
                                 disclosures.add(disclosure)
                                 disclosure.toArrayDigestElement(digestAlgorithm)
                             } else {
-                                element
+                                claimValue
                             }
                         })
                 }
@@ -549,15 +542,7 @@ class SdJwt private constructor(
                 creationTime = creationTime,
                 expiresIn = expiresIn
             ) {
-                if (issuerKey is AsymmetricKey.X509Certified) {
-                    put("x5c", issuerKey.certChain.toX5c())
-                }
                 for (claim in nonSdClaims) {
-                    if (claim.key == "x5c" && issuerKey is AsymmetricKey.X509Certified) {
-                        throw IllegalArgumentException(
-                            "Claim x5c is already included because `issuerKey` is X509Certified"
-                        )
-                    }
                     put(claim.key, claim.value)
                 }
 
